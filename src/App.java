@@ -27,15 +27,9 @@ public class App {
             return;
         }
 
-        String output = args[1];
         Scanner paths = new Scanner(new File(System.getenv("qspath") + "paths.qs"));
         while (paths.hasNextLine()) {
-            String line = paths.nextLine();
-            if (line.equals("")) {
-                System.out.println("Actually happens");
-                break;
-            }
-            String[] repo = getRepo(line);
+            String[] repo = getRepo(paths.nextLine());
             if (repo[0].equals(source)) {
                 source = repo[1];
             }
@@ -45,7 +39,7 @@ public class App {
         int type = 1;
         if (args.length > 2) {
             type = Integer.valueOf(args[2]);
-            setup(source, output, (byte) type);
+            setup(source, System.getProperty("user.dir"), (byte) type);
             return;
         }
 
@@ -77,7 +71,7 @@ public class App {
         }
 
         type = clamp(type, 1, 3);
-        setup(source, output, (byte) type);
+        setup(source, System.getProperty("user.dir") + "/", (byte) type);
     }
 
     private static void setup(String sourcePath, String outputPath, byte type) throws IOException {
@@ -94,7 +88,11 @@ public class App {
             deleteFolder(output, true);
             readInput.close();
         }
-        if ((!source.exists() || !output.exists()) || (!source.isDirectory() || !output.isDirectory())) return; // checks to make sure the user didn't input fake folders
+
+        if ((!source.exists() || !output.exists()) || (!source.isDirectory() || !output.isDirectory())) {
+            System.out.println("Error. This folder likely doesn't exist"); 
+            return; 
+        } 
 
         File[] sourceFiles = source.listFiles();
 
