@@ -42,7 +42,7 @@ Then you can actually add the files to the current working directory by writing
     qs.jar <name of template>
     --> qs.jar <name of template> <type>
     qs.jar <input directory>
-    --> qs.jar <name of template> <type>
+    --> qs.jar <input directory> <type>
 You can input the name of a template if you want to add the template files to a directory
 If you don't input a valid template name it will assume you're inputing in a directory and it will copy all the files from that directory
 
@@ -63,7 +63,7 @@ You can also change default.qsconf; changing this means that if a don't specify 
 The priority of types goes as such
 
     command
-    template .qsconf
+    template.qsconf
     default.qsconf
 
 When one isn't defined the next highest piority is picked.
