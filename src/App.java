@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class App {
@@ -16,6 +18,17 @@ public class App {
 
         String source = args[0];
         if (source.equals("init")) {
+            if (args.length > 1 && args[1].equals("all")) {
+                File[] folders = folders(System.getProperty("user.dir"));
+                for (File folder : folders) {
+                    String path = folder.getAbsolutePath() + "/";
+                    String name = folder.getName();
+                    FileWriter writer = new FileWriter(new File(System.getenv("qspath") + "paths.qs"), true);
+                    writer.write(name.length() + "%" + name + path + "\n");
+                    writer.close();
+                }
+                return;
+            }
             String path = System.getProperty("user.dir") + "/";
             String name = new File(path).getName();
             if (args.length > 1) {
@@ -168,5 +181,14 @@ public class App {
         }
         int endIndex = startIndex + Integer.valueOf(num);
         return new String[] {line.substring(startIndex, endIndex), line.substring(endIndex)};
+    }
+
+    private static File[] folders (String path) {
+        File[] file = new File(path).listFiles();
+        List<File> folders = new ArrayList<File>();
+        for (File f : file) {
+            if (f.isDirectory()) folders.add(f);
+        }
+        return folders.toArray(new File[0]);
     }
 }
