@@ -70,20 +70,23 @@ public class App {
         }
         defaultConfiguration.close();
 
-        try {
-            Scanner configuration = new Scanner(new File(source + ".qsconf"));
-            while (configuration.hasNextLine()) {
-                String[] item = configuration.nextLine().split("=");
-                if (item[0].equals("type")) {
-                    type = Integer.valueOf(item[1]);
-                }
-            }
-            configuration.close();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println("Either .qsconf doesn't exist or isn't formatted correctly");
+        File qsConf = new File(source + ".qsconf");
+        if (!qsConf.exists()) {
+            System.out.println("The file .qsconf doesn't exist or is not formatted correctly");
+            type = clamp(type, 1, 3);
+            setup(source, System.getProperty("user.dir") + "/", (byte) type, false);
+            runCommand(source);
+            return;
         }
-
+        Scanner configuration = new Scanner(qsConf);
+        while (configuration.hasNextLine()) {
+            String[] item = configuration.nextLine().split("=");
+            if (item.length < 2) continue;
+            if (item[0].equals("type")) {
+                type = Integer.valueOf(item[1]);
+            }
+        }
+        configuration.close();
         type = clamp(type, 1, 3);
         setup(source, System.getProperty("user.dir") + "/", (byte) type, false);
         runCommand(source);
@@ -198,21 +201,19 @@ public class App {
         return folders.toArray(new File[0]);
     }
 
-    private static void runCommand(String path) {
-        try {
-            Scanner file = new Scanner(new File(path + ".qscmd"));
-            while (file.hasNextLine()) {
-                String line = file.nextLine();
-                if (line.charAt(0) == '#') continue;
-                String[] command = line.split(" ");
-                ProcessBuilder process = new ProcessBuilder(command);
-                process.start();
-            }
-            file.close();
-        } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println(e.getMessage());
-            System.out.println(".qscmd likely doesn't exist or isn't formatted correctly");
+    private static void runCommand(String path) throws IOException {
+        File  qsCmd = new File(path + ".qscmd");
+        if (!qsCmd.exists()){
+            System.out.println("The file .qscmd doesn't exist or is not formatted correctly");
+            return;
         }
+        Scanner file = new Scanner(qsCmd);
+        while (file.hasNextLine()) {
+            String line = file.nextLine();
+            if (line.charAt(0) == '#') continue;
+            String[] command = line.split(" ");
+            new ProcessBuilder(command).start();
+        }
+        file.close();
     }
 }
