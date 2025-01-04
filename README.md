@@ -74,3 +74,10 @@ The priority of types goes as such
     default.qsconf
 
 When one isn't defined the next highest piority is picked.
+
+## CMD files
+The only thing that these conf files do is run each command that is in the file in the working directory
+```bash
+git init
+```
+Writing this in the file would automatically make a remote repo for you
