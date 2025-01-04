@@ -8,9 +8,9 @@ Currently I am working on some code that can be used to replace text in the temp
 The first thing you need to do is to setup your environment variables:
 
 In home directory:
-    
-    sudo nano /etc/environment
-
+```bash
+sudo nano /etc/environment
+```
 write
 ```python
 qspath=/path/to/Setup/

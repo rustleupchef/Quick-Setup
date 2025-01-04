@@ -52,7 +52,8 @@ public class App {
         int type = 1;
         if (args.length > 2) {
             type = Integer.valueOf(args[2]);
-            setup(source, System.getProperty("user.dir"), (byte) type);
+            setup(source, System.getProperty("user.dir"), (byte) type, false);
+            runCommand(source);
             return;
         }
 
@@ -84,14 +85,19 @@ public class App {
         }
 
         type = clamp(type, 1, 3);
-        setup(source, System.getProperty("user.dir") + "/", (byte) type);
+        setup(source, System.getProperty("user.dir") + "/", (byte) type, false);
+        runCommand(source);
     }
 
     private static void setup(String sourcePath, String outputPath, byte type) throws IOException {
+        setup(sourcePath, outputPath, (byte) type, true);
+    }
+
+    private static void setup(String sourcePath, String outputPath, byte type, boolean asked) throws IOException {
         File source = new File(sourcePath);
         File output = new File(outputPath);
 
-        if (type == (byte) 2){
+        if (type == (byte) 2 && !asked) {
             Scanner readInput = new Scanner(System.in);
             System.out.println("Are you sure you want to delete all files? Y or y/any other input)");
             if (!readInput.nextLine().toLowerCase().equals("y")) {
@@ -119,7 +125,7 @@ public class App {
                 continue;
             }
 
-            if (file.getName().equals(".qsconf")) continue;
+            if (file.getName().equals(".qsconf") || file.getName().equals(".qscmd")) continue;
 
             if (type == (byte) 3) {
                 copy(file, outputPath, true);
@@ -190,5 +196,23 @@ public class App {
             if (f.isDirectory()) folders.add(f);
         }
         return folders.toArray(new File[0]);
+    }
+
+    private static void runCommand(String path) {
+        try {
+            Scanner file = new Scanner(new File(path + ".qscmd"));
+            while (file.hasNextLine()) {
+                String line = file.nextLine();
+                if (line.charAt(0) == '#') continue;
+                String[] command = line.split(" ");
+                ProcessBuilder process = new ProcessBuilder(command);
+                process.start();
+            }
+            file.close();
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println(e.getMessage());
+            System.out.println(".qscmd likely doesn't exist or isn't formatted correctly");
+        }
     }
 }
