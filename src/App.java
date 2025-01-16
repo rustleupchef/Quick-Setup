@@ -50,8 +50,8 @@ public class App {
         paths.close();
 
         int type = 1;
-        if (args.length > 2) {
-            type = Integer.valueOf(args[2]);
+        if (args.length > 1) {
+            type = Integer.valueOf(args[1]);
             setup(source, System.getProperty("user.dir"), (byte) type, false);
             runCommand(source);
             return;
