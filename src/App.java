@@ -41,6 +41,20 @@ public class App {
         }
 
         Scanner paths = new Scanner(new File(System.getenv("qspath") + "paths.qs"));
+        if (source.equals("list")) {
+            while (paths.hasNextLine()) {
+                String[] repo = getRepo(paths.nextLine());
+                if (repo.length < 2) {
+                    System.out.println("path.qs is formatted incorrectly");
+                    paths.close();
+                    return;
+                }
+                System.out.println("Repo Name: " + repo[0] + "\tDirectory: " + repo[1]);
+            }
+            paths.close();
+            return;
+        }
+
         while (paths.hasNextLine()) {
             String[] repo = getRepo(paths.nextLine());
             if (repo[0].equals(source)) {
